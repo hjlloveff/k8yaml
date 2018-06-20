@@ -1,0 +1,22 @@
+[Unit]
+Description=Kubernetes Proxy
+After=network.target
+After=docker.service
+
+[Service]
+ExecStart=/opt/bin/kube-proxy  \
+  --hostname-override=<HOSTNAME> \
+  --proxy-mode=iptables \
+  --masquerade-all \
+  --feature-gates=SupportIPVSProxyMode=true \
+  --ipvs-min-sync-period=5s \
+  --ipvs-sync-period=5s \
+  --ipvs-scheduler=rr \
+  --kubeconfig=/etc/kubernetes/worker-https-kubeconfig \
+  --logtostderr=false \
+  --log-dir=/var/log/kubernetes \
+  --v=6 
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

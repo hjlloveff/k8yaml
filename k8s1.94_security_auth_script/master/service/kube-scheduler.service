@@ -1,0 +1,18 @@
+[Unit]
+Description=Kubernetes Scheduler
+Documentation=https://github.com/kubernetes/kubernetes
+After=docker.service
+
+[Service]
+User=root
+ExecStart=/opt/bin/kube-scheduler \
+  --logtostderr=false \
+  --master=127.0.0.1:8080 \
+  --v=6 \
+  --log-dir=/var/log/kubernetes \
+  --leader-elect=True
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

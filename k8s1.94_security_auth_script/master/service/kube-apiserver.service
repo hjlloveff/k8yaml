@@ -1,0 +1,35 @@
+[Unit]
+Description=Kubernetes API Server
+Documentation=https://github.com/kubernetes/kubernetes
+After=etcd.service
+
+[Service]
+User=root
+ExecStart=/opt/bin/kube-apiserver \
+ --insecure-bind-address=127.0.0.1 \
+ --insecure-port=8080 \
+ --etcd-servers=http://<HOST_IP>:2379 \
+ --logtostderr=false \
+ --allow-privileged=true \
+ --service-cluster-ip-range=172.18.0.0/16 \
+ --admission-control=NamespaceLifecycle,ServiceAccount,LimitRanger,SecurityContextDeny,ResourceQuota \
+ --service-node-port-range=30000-32767 \
+ --advertise-address=<HOST_IP> \
+ --v=6 \
+ --storage-backend=etcd2 \
+ --log-dir=/var/log/kubernetes \
+ --client-ca-file=/srv/kubernetes-https/ca.pem \
+ --tls-private-key-file=/srv/kubernetes-https/apiserver-key.pem \
+ --tls-cert-file=/srv/kubernetes-https/apiserver.pem \
+ --service_account_key_file=/srv/kubernetes-https/apiserver-key.pem \
+ --secure-port=6443 \
+ --bind-address=0.0.0.0 \
+ --runtime-config=batch/v2alpha1=true \
+ --apiserver-count=2
+
+Restart=on-failure
+Type=notify
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

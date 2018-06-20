@@ -1,0 +1,22 @@
+[Unit]
+Description=Kubernetes Kubelet
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStart=/opt/bin/kubelet \
+  --hostname-override=<HOSTNAME> \
+  --register-node=true \
+  --logtostderr=false \
+  --log-dir=/var/log/kubernetes \
+  --v=6 \
+  --cluster_dns=172.18.0.5 \
+  --allow-privileged=true \
+  --kubeconfig=/etc/kubernetes/worker-https-kubeconfig \
+  --fail-swap-on=false \
+  --cluster_domain=cluster.local 
+Restart=on-failure
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
