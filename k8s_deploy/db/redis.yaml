@@ -1,0 +1,66 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: redis
+spec:
+  serviceName: "redis"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+    spec:
+      # soft antiaffinity for optimize placement
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - redis
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - name: redis
+        image: 172.16.101.70/emotibot-k8s/redis:latest
+        args:
+          - "--requirepass cmbc1234"
+        ports:
+          - containerPort: 6379
+        resources:
+          limits:
+            memory: 2048Mi
+          requests:
+            memory: 512Mi
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: hosttime
+      volumes:
+       - name: hosttime
+         hostPath:
+           path: /etc/localtime 
+      #select node label if enable
+#      nodeSelector:
+#        ebot-role: ebot-controller 
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  ports:
+  - name: http
+    protocol: TCP
+    #port is loadbalancer port
+    port: 6379
+    # targetport is container port
+    targetPort: 6379
+  selector:
+    app: redis
+

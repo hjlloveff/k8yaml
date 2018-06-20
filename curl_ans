@@ -1,0 +1,58 @@
+[31msolr [0m 
+{
+  "responseHeader":{
+    "status":0,
+    "QTime":0,
+    "params":{
+      "q":"database:\"csbot_other\"",
+      "indent":"true",
+      "rows":"1",
+      "wt":"json"}},
+  "response":{"numFound":502,"start":0,"docs":[
+      {
+        "id":"csbot_other_110_110_self",
+        "sentence":"查询 他人 的 信用卡 账户",
+        "sentence_original":"查询他人的信用卡账户",
+        "source":"csbot",
+        "sentence_keywords":"查询 信用卡 账户",
+        "sentence_pos":"查询/v 他人/rr 的/ude1 信用卡/n 账户/n",
+        "related_sentences":["{\"answer\":\"查询他人的信用卡账户\",\"creator\":\"csbot\"}"],
+        "_version_":1598279349156446208}]
+  }}
+[31mconsul [0m 
+[{"ID":"","Node":"local","Address":"172.17.0.1","Datacenter":"","TaggedAddresses":null,"NodeMeta":null,"ServiceID":"solr","ServiceName":"solr","ServiceTags":[],"ServiceAddress":"","ServicePort":8081,"ServiceEnableTagOverride":false,"CreateIndex":204801,"ModifyIndex":204801}]
+[31msentence-type [0m 
+否定陈述句
+[31mcommon-parser-service [0m 
+{"status_code":0,"status_message":"SUCCESS","processed_text":"我想明天订1张去上海机票","time_module":[{"text":"明天","begin_index":2,"end_index":4,"begin_time":"2018-04-24 00:00:00","end_time":"2018-04-24 23:59:59","credible_unit":"DAY"}]}
+[31mintent-support [0m 
+{"predictions": [{"label": "催促，退款", "other_info": [], "score": 52}], "type": "intent(VIP-TASK-ENGINE)", "updated_date": "2017-11-21", "version": "1.0.0"}
+[31mfunction-intent [0m 
+{"predictions": [{"label": "求，笑话", "other_info": [], "score": 98}], "type": "intent(function)", "updated_date": "2018-04-16", "version": "1.0.0"}
+[31memotion-support [0m 
+{"predictions": [{"action": "", "label": "愤怒", "score": "93"}], "type": "mood(CHAT-EMOTION)", "updated_date": "2017-12-19", "version": "1.0.0"}
+[31mwordtovecservice [0m 
+0.725752
+[31mcustom-inference-service [0m 
+{"Msg": {"1": 0.9048714329346519, "0": 0.9999999663782637}, "Status": "Success"}
+[31msnlu-all [0m 
+[{"query": "我喜  欢你", "nlpState": 0, "stateCode": 0, "segment": [{"word": "我", "pos": "rr"}, {"word": "喜", "pos": "v"}, {"word": "  ", "pos": "w"}, {"word": "欢", "pos": "a"}, {"word": "你", "pos": "rr"}]}]
+[31mfaq-module-20 [0m 
+[{"match_q":"DemoQ","score":35.48,"source":"QQ","q_id":1163}]
+[31mchat-service [0m 
+{"module":"editorial_sport","res":{"match_question":"你是今天生日吗？","answer":"我出生于2月14日","score":79.62,"source":"csbot (84.70 * 1.00 * 0.94)","topic":[],"emotion":[],"speech_act":[]}}
+[31mtask-engine [0m 
+{"TTSText": null, "HitScenarioID": null, "FinalFlag": -1}
+[31memotibot-controller-20 [0m 
+{"question":"你的生日是","userId":"123","module":"task_engine","score":80.0,"tokens":["你/rr","的/ude1","生日/n","是/vshi"],"intent":"","emotion":"中性","relatedQuestions":[],"type":"S","status":0,"message":"success","tspan":118,"data":[{"type":"text","subType":"text","value":"本行转账行内转账系统会直接校验收款方账户信息，若收款方信息填写错误，交易时会提示报错“卡的用户名检查不通过”","data":[],"extendData":""}],"systemInfo":"","extendData":""}
+{"question":"转账的时候录错对方信息","userId":"123","module":"task_engine","score":80.0,"tokens":["转账/vn","的/ude1","时候/n","录/v","错/a","对方/rr","信息/n"],"intent":"转账的时候录错对方信息","emotion":"中性","relatedQuestions":[],"type":"S","status":0,"message":"success","tspan":150,"data":[{"type":"text","subType":"text","value":"本行转账还是跨行转账？","data":[],"extendData":""}],"systemInfo":"","extendData":""}
+[31mmulticustomer [0m 
+ok
+[31mbot-bot-factory-backend-service [0m 
+ok
+[31mrobotwriter [0m 
+{"answer": "[\u5317\u4eac\u591a\u4e91\uff0c\u98ce\u6709\u70b9\u5927\uff0c\u5f53\u5fc3\u5c18\u571f\u8ff7\u5230\u773c\u775b\u3002\u9884\u8ba1\u5168\u59299~19\u5ea6\uff0c\u6b64\u523b13\u5ea6\u3002\u7a7a\u6c14\u8d28\u91cf\u4f18\uff0c\u5feb\u5927\u53e3\u547c\u5438\u3002],[\u8fd9\u4e2a\u98ce\u548c\u65e5\u6696\u7684\u5b63\u8282\u91cc\uff0c\u53bb\u4eab\u53d7\u6ee1\u56ed\u7684\u82b1\u9999\u99a5\u90c1\u5427~~~]", "statusCode": 200}
+[31mfunction-content [0m 
+{"result":[{"currencyF":"JPY","currencyF_Name":"日元","currencyT_Name":"巴林第纳尔","currencyT":"BHD","currencyFD":1.0,"exchange":0.0033834318}],"version":"1.0.1","status":0,"reason":"成功的返回","type":"exchange.rate","useTime":0}
+[31mfunction-web-service [0m 
+{"status_code":0,"status_msg":"SUCCESS","function":{"answers":"结果是0.0啦～～","subModule":"ComputationModule","score":100.0}}

@@ -1,0 +1,27 @@
+clusters:
+    chat_cluster:
+        - vca-chat1.api.vip.com
+        - vca-chat2.api.vip.com
+        - vca-chat3.api.vip.com
+        - vca-chat4.api.vip.com
+    bot_factory_cluster:
+        - vca-chat5.api.vip.com
+    consul_cluster:
+        - vca-chat3.api.vip.com
+        - vca-chat4.api.vip.com
+        - vca-chat5.api.vip.com
+    stat_cluster:
+        - vca-chat1.api.vip.com
+        - vca-chat2.api.vip.com
+        - vca-chat3.api.vip.com
+        - vca-chat4.api.vip.com
+        - vca-chat5.api.vip.com
+    arango_cluster:
+        - vca-chat1.api.vip.com
+        - vca-chat2.api.vip.com
+    solr_cluster:
+        - vca-solr1.api.vip.com
+        - vca-solr2.api.vip.com
+admin_info:
+    user: deployer
+    pw: Emotibot1

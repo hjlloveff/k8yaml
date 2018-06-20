@@ -1,0 +1,89 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: consul
+spec:
+  serviceName: "consul"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: consul
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+    spec:
+      # soft antiaffinity for optimize placement
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - consul
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - name: consul
+        image: 172.16.101.70/suse_image/consul:1.0.2-SUSE-v3
+        envFrom:
+        - configMapRef:
+            name: csbot-env
+        env:
+        - name: cmbc_logs_redis
+          value: stdout
+        - name: cmbc_logs_redis_tags
+          value: "topic=elk-ainlu"
+        args:
+          - "agent"
+          - "-bind=0.0.0.0"
+          - "-bootstrap-expect=1"
+          - "-client=0.0.0.0"
+          - "-server"
+          - "-ui"
+        ports:
+          - containerPort: 8500
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            memory: 512Mi
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: hosttime
+        - mountPath: /consul/config
+          name: consulconfig
+        - mountPath: /consul/data
+          name: consuldata
+      volumes:
+       - name: hosttime
+         hostPath:
+           path: /etc/localtime 
+       - name: consulconfig
+         hostPath:
+           path: /data/csbot/infrastructure/config/consul
+       - name: consuldata
+         hostPath:
+           path: /data/csbot/infrastructure/volumes/consul
+#      select node label if enable
+      nodeSelector:
+        csbot: db
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul
+  labels:
+    app: consul
+spec:
+  ports:
+  - name: http
+    protocol: TCP
+    #port is loadbalancer port
+    port: 8500
+    # targetport is container port
+    targetPort: 8500
+  selector:
+    app: consul
+

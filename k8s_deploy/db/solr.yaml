@@ -1,0 +1,71 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: solr
+spec:
+  serviceName: "solr"
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: solrsiang
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+    spec:
+      # soft antiaffinity for optimize placement
+#      affinity:
+#        podAntiAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#          - labelSelector:
+#              matchExpressions:
+#                - key: app
+#                  operator: In
+#                  values:
+#                  - solrsiang
+#            topologyKey: kubernetes.io/hostname
+      containers:
+      - name: solr
+        image: 172.16.101.70/suse_image/solr:5.5-SUSE-v7
+        ports:
+          - containerPort: 8983
+            name: solr
+#          - containerPort: 8082
+#            name: jmx
+        env:
+        - name: K8S_REPLICAS
+          value: "1"
+        - name: K8S_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: hosttime
+        - mountPath: /opt/solr/server/solr
+          name: solr
+      volumes:
+       - name: hosttime
+         hostPath:
+           path: /etc/localtime
+       - name: solr
+         hostPath:
+           path: /data/csbot/infrastructure/volumes/solr
+      nodeSelector:
+        csbot: "db"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: solr
+  labels:
+    app: solr
+spec:
+  ports:
+  - name: solr
+#    protocol: TCP
+    port: 8081
+    targetPort: 8983
+  clusterIP: None
+  selector:
+    app: solrsiang
+

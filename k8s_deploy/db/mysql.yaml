@@ -1,0 +1,71 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  serviceName: "mysql"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+    spec:
+      # soft antiaffinity for optimize placement
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - mysql
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - name: mysql
+        image: 172.16.101.70/emotibot-k8s/mysql:5.7
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "Mysql123"
+        ports:
+          - containerPort: 3306
+            name: mysql
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            memory: 512Mi
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: hosttime
+        - mountPath: /var/lib/mysql
+          name: mysqldata
+      volumes:
+       - name: hosttime
+         hostPath:
+           path: /etc/localtime
+       - name: mysqldata
+         hostPath:
+           path: /data/csbot/infrastructure/volumes/mysql
+      nodeSelector:
+        csbot: db 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  ports:
+  - name: mysql
+    protocol: TCP
+    #port is loadbalancer port
+    port: 3306
+    # targetport is container port
+    targetPort: 3306
+  selector:
+    app: mysql
+

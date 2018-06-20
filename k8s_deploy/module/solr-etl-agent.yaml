@@ -1,0 +1,84 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: solr-etl-agent
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: solr-etl-agent
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+    spec:
+      # soft antiaffinity for optimize placement
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution: 
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - solr-etl-agent
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: solr-etl-agent
+        image: 172.16.101.70/suse_image/solr-etl-agent:6f1867a-SUSE
+        envFrom:
+        - configMapRef:
+            name: csbot-env
+        env:
+        - name: cmbc_logs_redis
+          value: stdout
+        - name: cmbc_logs_redis_tags
+          value: "topic=elk-ainlu"
+        resources:
+          limits:
+            cpu: 1
+            memory: 5125Mi
+          requests:
+            cpu: 1
+            memory: 5125Mi
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: hosttime
+#        - mountPath: /usr/src/app/.tmp
+#          name: volumepath
+      volumes:
+       - name: hosttime
+         hostPath:
+           path: /etc/localtime
+#       - name: volumepath
+#         hostPath:
+#           path: /home/deployer/debug_logs/solr-etl-agent
+  #select node label if enable
+      #nodeSelector:
+      #  ebotrole: worker
+  minReadySeconds: 5
+  strategy:
+    # indicate which strategy we want for rolling update
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: solr-etl-agent
+  labels:
+    app: solr-etl-agent
+spec:
+  ports:
+  - name: http
+    protocol: TCP
+    #port is loadbalancer port
+    port: 8080
+    # targetport is container port
+    targetPort: 1337
+  selector:
+    app: solr-etl-agent

@@ -1,0 +1,70 @@
+version: '2.1'
+services:
+
+    mysql:
+      image: docker-reg.emotibot.com.cn:55688/mysql:5.7
+      container_name: mysql
+      ports:
+        - 3306:3306
+      environment:
+          MYSQL_ROOT_PASSWORD: password
+          TZ: Asia/Taipei
+      volumes:
+        - /home/deployer/infrastructure/volumes/mysql:/var/lib/mysql
+      mem_limit: 5125m
+      restart: always
+      healthcheck:
+        test: "/usr/bin/mysql --user=root --password=password --execute=\"SHOW DATABASES;\""
+        interval: 3s
+        timeout: 3s
+        retries: 20
+    redis:
+      image: docker-reg.emotibot.com.cn:55688/redis
+      container_name: redis
+      ports:
+        - 6379:6379
+      restart: always
+      command: redis-server --requirepass password
+    solr:
+      image: docker-reg.emotibot.com.cn:55688/solr:5.5-SUSE-v6
+      container_name: solr
+      ports:
+        - "8081:8983"
+      environment:
+        TZ: Asia/Taipei
+      volumes:
+        - /home/deployer/infrastructure/volumes/solr:/opt/solr/server/solr
+      restart: always
+    consul:
+      image: docker-reg.emotibot.com.cn:55688/consul:1.0.2-SUSE-v3
+      container_name: consul
+      ports:
+        - 8500:8500
+      environment:
+        TZ: Asia/Taipei
+      restart: always
+      command: agent -ui -server -client 0.0.0.0 -bootstrap-expect=1
+      healthcheck:
+        test: "curl http://localhost:8500/"
+        interval: 3s
+        timeout: 3s
+        retries: 20
+
+
+    init-db:
+      image: docker-reg.emotibot.com.cn:55688/init-db:2018053113-c775bcf
+      container_name: init-db
+      environment:
+        INIT_SOLR_HOSTS: 172.17.0.1
+        INIT_SOLR_PORTS: 8081
+        INIT_MYSQL_INIT: "true"
+        INIT_CONSUL_URL: 172.17.0.1:8500
+        INIT_MYSQL_HOST: 172.17.0.1
+        INIT_MYSQL_USER: root
+        INIT_MYSQL_PASSWORD: password
+      depends_on:
+        "mysql":
+          condition: service_healthy
+        "consul":
+          condition: service_healthy
+

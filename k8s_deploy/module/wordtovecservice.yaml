@@ -1,0 +1,72 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: wordtovecservice
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wordtovecservice
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+    spec:
+      # soft antiaffinity for optimize placement
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution: 
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - wordtovecservice
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: wordtovecservice
+        image: 172.16.101.70/suse_image/rc_word2vec:e42c588-SUSE
+        envFrom:
+        - configMapRef:
+            name: csbot-env
+        env:
+        - name: cmbc_logs_redis
+          value: stdout
+        - name: cmbc_logs_redis_tags
+          value: "topic=elk-ainlu"
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: hosttime
+      volumes:
+       - name: hosttime
+         hostPath:
+           path: /etc/localtime 
+      #select node label if enable
+      #nodeSelector:
+      #  ebotrole: worker
+  minReadySeconds: 5
+  strategy:
+    # indicate which strategy we want for rolling update
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordtovecservice
+  labels:
+    app: wordtovecservice
+spec:
+  ports:
+  - name: http
+    protocol: TCP
+    #port is loadbalancer port
+    port: 8080
+    # targetport is container port
+    targetPort: 8080
+  selector:
+    app: wordtovecservice

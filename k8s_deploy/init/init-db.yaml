@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-db
+spec:
+  template:
+    spec:
+      containers:
+      - name: init-db
+        image: 172.16.101.70/suse_image/init-db:2018053113-c775bcf
+        env:
+        - name: INIT_CONSUL_URL
+          value: "consul:8500"
+        - name: INIT_SOLR_HOSTS
+          value: "solr-0.solr,solr-1.solr"
+        - name: INIT_SOLR_PORTS
+          value: "8983,8983"
+        # enable init db
+        - name: INIT_MYSQL_INIT
+          value: "true"
+        - name: INIT_MYSQL_HOST
+          value: "mysql"
+        - name: INIT_MYSQL_PORT
+          value: "3306"
+        - name: INIT_MYSQL_USER
+          value: "root"
+        - name: INIT_MYSQL_PASSWORD
+          value: "Mysql123"
+      restartPolicy: Never

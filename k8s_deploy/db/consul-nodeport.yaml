@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul-nodeport
+  labels:
+    app: consul-nodeport
+spec:
+  type: NodePort
+  ports:
+  - name: solr
+    protocol: TCP
+    #port is loadbalancer port
+    port: 8500
+    # targetport is container port
+    targetPort: 8500
+    nodePort: 30081
+  selector:
+    app: consul

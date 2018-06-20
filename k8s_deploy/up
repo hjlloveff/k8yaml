@@ -1,0 +1,3 @@
+#!/bin/bash
+namespace=$(<namespace)
+kubectl create -f $1 --namespace=$namespace

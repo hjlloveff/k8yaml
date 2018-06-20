@@ -1,0 +1,4 @@
+#!/bin/bash
+namespace=$(<namespace)
+kubectl get -o wide jobs,pods,svc,endpoints --namespace=$namespace
+kubectl describe pods --namespace=$namespace | grep "Image:"

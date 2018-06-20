@@ -1,0 +1,4 @@
+#!/bin/bash
+namespace=$(<namespace)
+pod=$(kubectl get pods --namespace=minsheng | grep $1 | head -n1 | awk {'print $1'})
+kubectl exec -it $pod sh --namespace=$namespace
